@@ -18,3 +18,20 @@ export const getBidIncrement = (currentBid) => {
   }
   return 1000;
 };
+
+export const getLastBid = (data) => {
+  if (!data.bids.length) {
+    return 0;
+  } else {
+    return data.bids[data.bids.length - 1].bidCost;
+  }
+};
+
+export const getMinBid = (data) => {
+  const lastBid = getLastBid(data);
+  if (lastBid === 0) {
+    return data.minBid;
+  }
+  const minBid = lastBid + getBidIncrement(lastBid);
+  return minBid;
+};

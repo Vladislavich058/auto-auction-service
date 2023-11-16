@@ -7,7 +7,7 @@ const LotNewList = ({ lots }) => {
   const router = useNavigate();
   return (
     <div>
-      <div className="flex flex-wrap justify-between">
+      <div className="flex flex-wrap justify-around">
         {lots.map((lot) => (
           <LotNewItem key={lot.id} lot={lot}></LotNewItem>
         ))}

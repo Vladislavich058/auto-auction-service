@@ -3,12 +3,17 @@ import {
   Button,
   Card,
   Chip,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
   IconButton,
   Input,
   Spinner,
   Typography,
 } from "@material-tailwind/react";
 import AdminService from "API/AdminService";
+import ClientService from "API/ClientService";
 import LotService from "API/LotService";
 import MyAlert from "components/UI/Alert/MyAlert";
 import { useAuth } from "hooks/useAuth";
@@ -17,7 +22,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import ImageGallery from "react-image-gallery";
 import { useNavigate, useParams } from "react-router-dom";
-import { getBidIncrement } from "utils/bidIncrement";
+import { getBidIncrement, getLastBid, getMinBid } from "utils/bids";
 
 const LotIdPage = ({ type = "" }) => {
   const params = useParams();
@@ -27,13 +32,18 @@ const LotIdPage = ({ type = "" }) => {
     maxBid: "",
     bids: {},
     status: {},
+    manager: {},
+    client: {},
   });
   const [images, setImages] = useState();
   const [error, setError] = useState("");
   const [errorOpen, setErrorOpen] = useState(false);
-  const [bid, setBid] = useState("");
-  const { authUser } = useAuth();
+  const [bid, setBid] = useState({ value: 0 });
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleOpenDialog = () => setOpenDialog(!openDialog);
   const router = useNavigate();
+  const { authUser } = useAuth();
 
   const {
     register,
@@ -52,23 +62,12 @@ const LotIdPage = ({ type = "" }) => {
     setImages(images);
   };
 
-  const getLastBid = (data) => {
-    if (!data.bids.length) {
-      return 0;
-    } else {
-      const currentBid = data.bids[data.bids.length - 1];
-      const minBid = currentBid + getBidIncrement(currentBid);
-      return minBid;
-    }
+  const handleChange = (event) => {
+    setBid({ value: event.target.value });
   };
 
-  const getMinBid = (data) => {
-    const lastBid = getLastBid(data);
-    if (lastBid === 0) {
-      return data.minBid;
-    }
-    const minBid = lastBid + getBidIncrement(lastBid);
-    return minBid;
+  const handleAddBid = () => {
+    addBid(lot.id, bid);
   };
 
   const [fetchLot, isLotLoading, lotError, lotErrorOpen, setLotErrorOpen] =
@@ -76,7 +75,7 @@ const LotIdPage = ({ type = "" }) => {
       const response = await LotService.getLotById(params.id);
       fillImages(response.data);
       if (type === "" || type === "client") {
-        setBid(getMinBid(response.data));
+        setBid({ value: getMinBid(response.data) });
         reset();
       }
       setLot(response.data);
@@ -153,8 +152,42 @@ const LotIdPage = ({ type = "" }) => {
     },
     {
       label: "Текущая ставка",
-      value: 0,
+      value: lot.bids && getLastBid(lot),
       info: "$",
+    },
+  ];
+
+  const userDetails = [
+    {
+      label: "ФИО",
+      value:
+        type === "manager"
+          ? lot.client &&
+            lot.client.surname +
+              " " +
+              lot.client.name +
+              " " +
+              lot.client.lastname
+          : lot.manager &&
+            lot.manager.surname +
+              " " +
+              lot.manager.name +
+              " " +
+              lot.manager.lastname,
+    },
+    {
+      label: "Телефон",
+      value:
+        type === "manager"
+          ? lot.manager && lot.manager.phone
+          : lot.client && lot.client.phone,
+    },
+    {
+      label: "Email",
+      value:
+        type === "manager"
+          ? lot.manager && lot.manager.email
+          : lot.client && lot.client.email,
     },
   ];
 
@@ -179,6 +212,20 @@ const LotIdPage = ({ type = "" }) => {
   const refuseLot = async (id) => {
     try {
       await AdminService.refuseLotById(id);
+      fetchLot();
+    } catch (e) {
+      setErrorOpen(true);
+      const errorMes =
+        (e.response && e.response.data && e.response.data.message) ||
+        e.message ||
+        e.toString();
+      setError(errorMes);
+    }
+  };
+
+  const addBid = async (id, bid) => {
+    try {
+      await ClientService.addBid(id, { bid });
       fetchLot();
     } catch (e) {
       setErrorOpen(true);
@@ -217,7 +264,8 @@ const LotIdPage = ({ type = "" }) => {
           <div className="flex flex-wrap justify-around">
             {lot.car.files && lot.car.files.length ? (
               <div className="xl:w-[500px] lg:w-[400px] mt-5 relative">
-                {type === "manager" || type === "admin" ? (
+                {(type === "manager" && authUser.id === lot.manager.id) ||
+                type === "admin" ? (
                   <div className="absolute z-10 top-1 left-1">
                     <Chip
                       variant="filled"
@@ -308,54 +356,71 @@ const LotIdPage = ({ type = "" }) => {
             ) : (
               <div>Нет фото</div>
             )}
-            <Card className="xl:w-[500px] lg:w-[400px] mt-5">
-              <div className="py-2 px-5 border-b-[1px] border-gray-300">
-                <Typography variant="h6" color="black" className="uppercase">
-                  Информация об автомобиле
-                </Typography>
-              </div>
-              {vehicleDetails.map(({ label, value, info }, index) => (
-                <div
-                  key={label}
-                  className={`py-2 px-5 flex ${
-                    index === vehicleDetails.length - 1
-                      ? ""
-                      : "border-b-[1px] border-gray-100"
-                  }`}
-                >
-                  <div className="w-[50%] text-sm">{label}:</div>
-                  <div className="font-medium text-black text-sm">
-                    <span className="uppercase">{value}</span> {info}
+            <div>
+              <Card className="xl:w-[500px] lg:w-[400px] mt-5 pb-2">
+                <div className="py-2 px-5 border-b-[1px] border-gray-300">
+                  <Typography variant="h6" color="black" className="uppercase">
+                    Информация об автомобиле
+                  </Typography>
+                </div>
+                {vehicleDetails.map(({ label, value, info }, index) => (
+                  <div
+                    key={label}
+                    className={`py-2 px-5 flex items-center ${
+                      index === vehicleDetails.length - 1
+                        ? ""
+                        : "border-b-[1px] border-gray-100"
+                    }`}
+                  >
+                    <div className="w-[50%] text-sm">{label}:</div>
+                    <div className="font-medium text-black text-sm">
+                      <span className="uppercase">{value}</span> {info}
+                    </div>
                   </div>
-                </div>
-              ))}
-              {type === "admin" && lot.status.lotStatus === "IN_PROCESSING" ? (
-                <div className="p-3 w-full flex flex-wrap justify-around">
-                  <Button color="red" onClick={() => refuseLot(lot.id)}>
-                    Отклонить
-                  </Button>
-                  <Button color="green" onClick={() => approveLot(lot.id)}>
-                    Подвтердить
-                  </Button>
-                </div>
-              ) : type === "admin" && lot.status.lotStatus === "REFUSED" ? (
-                <div className="p-3 w-full flex flex-wrap justify-around">
-                  <Button color="green" onClick={() => approveLot(lot.id)}>
-                    Подвтердить
-                  </Button>
-                </div>
-              ) : type === "admin" && lot.status.lotStatus === "VALIDATED" ? (
-                <div className="p-3 w-full flex flex-wrap justify-around">
-                  <Button color="red" onClick={() => refuseLot(lot.id)}>
-                    Отклонить
-                  </Button>
-                </div>
+                ))}
+                {type === "admin" &&
+                lot.status.lotStatus === "IN_PROCESSING" ? (
+                  <div className="p-3 w-full flex flex-wrap justify-around">
+                    <Button color="red" onClick={() => refuseLot(lot.id)}>
+                      Отклонить
+                    </Button>
+                    <Button color="green" onClick={() => approveLot(lot.id)}>
+                      Подвтердить
+                    </Button>
+                  </div>
+                ) : type === "admin" && lot.status.lotStatus === "REFUSED" ? (
+                  <div className="p-3 w-full flex flex-wrap justify-around">
+                    <Button color="green" onClick={() => approveLot(lot.id)}>
+                      Подвтердить
+                    </Button>
+                  </div>
+                ) : type === "admin" && lot.status.lotStatus === "VALIDATED" ? (
+                  <div className="p-3 w-full flex flex-wrap justify-around">
+                    <Button color="red" onClick={() => refuseLot(lot.id)}>
+                      Отклонить
+                    </Button>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </Card>
+              {type === "manager" &&
+              authUser.id === lot.manager.id &&
+              lot.status.lotStatus === "SOLD" ? (
+                <Button
+                  className="mt-5"
+                  fullWidth
+                  onClick={() => setOpenDialog(true)}
+                >
+                  Показать клиента
+                </Button>
               ) : (
                 ""
               )}
-            </Card>
+            </div>
+
             {type === "" || type === "client" ? (
-              <Card className="xl:w-[350px] lg:w-[250px] mt-5 h-full">
+              <Card className="xl:w-[350px] lg:w-[250px] mt-5 h-full pb-2">
                 <div className="py-2 px-5 border-b-[1px] border-gray-300">
                   <Typography variant="h6" color="black" className="uppercase">
                     Информация о торгах
@@ -364,7 +429,7 @@ const LotIdPage = ({ type = "" }) => {
                 {bidDetails.map(({ label, value, info }, index) => (
                   <div
                     key={label}
-                    className={`py-2 px-5 flex ${
+                    className={`py-2 px-5 flex items-center ${
                       index === bidDetails.length - 1
                         ? ""
                         : "border-b-[1px] border-gray-100"
@@ -378,7 +443,11 @@ const LotIdPage = ({ type = "" }) => {
                 ))}
                 <form
                   className="py-5 px-5"
-                  onSubmit={authUser ? () => {} : () => {router("/login")}}
+                  onSubmit={
+                    type === ""
+                      ? () => router("/login")
+                      : handleSubmit(handleAddBid)
+                  }
                 >
                   <div className="mb-1 flex flex-col gap-3.5">
                     <Input
@@ -402,13 +471,13 @@ const LotIdPage = ({ type = "" }) => {
                           message: `Неверная ставка! Максимальное значение ${lot.maxBid}`,
                         },
                       })}
-                      value={bid}
+                      value={bid.value}
                       min={lot.bids && getMinBid(lot)}
                       step={lot.bids && getBidIncrement(getLastBid(lot))}
                       max={lot.maxBid}
                       error={errors?.bid ? true : false}
                       crossOrigin={undefined}
-                      onChange={(e) => setBid(e.target.value)}
+                      onChange={(e) => handleChange(e)}
                     />
                     <div className=" text-red-500 font-raleway -mt-2">
                       {errors?.bid && (
@@ -434,6 +503,45 @@ const LotIdPage = ({ type = "" }) => {
             ) : (
               ""
             )}
+            <Dialog
+              open={openDialog}
+              handler={handleOpenDialog}
+              animate={{
+                mount: { scale: 1, y: 0 },
+                unmount: { scale: 0.9, y: -100 },
+              }}
+              size="sm"
+            >
+              <DialogHeader>
+                Информация о {type === "manager" ? "клиенте" : "менеджере"}
+              </DialogHeader>
+              <DialogBody>
+                {userDetails.map(({ label, value }, index) => (
+                  <div
+                    key={label}
+                    className={`py-2 flex items-center ${
+                      index === userDetails.length - 1
+                        ? ""
+                        : "border-b-[1px] border-gray-100"
+                    }`}
+                  >
+                    <div className="w-[30%] text-base">{label}:</div>
+                    <div className="font-medium text-black text-base">
+                      <span className="uppercase">{value}</span>
+                    </div>
+                  </div>
+                ))}
+              </DialogBody>
+              <DialogFooter>
+                <Button
+                  variant="gradient"
+                  color="green"
+                  onClick={handleOpenDialog}
+                >
+                  <span>OK</span>
+                </Button>
+              </DialogFooter>
+            </Dialog>
           </div>
         </div>
       )}

@@ -18,7 +18,6 @@ const LotTable = ({
   sortedAndSearchAndFilterLots,
   filter,
   setFilter,
-  setOpenDialog,
   type,
 }) => {
   const TABS = [

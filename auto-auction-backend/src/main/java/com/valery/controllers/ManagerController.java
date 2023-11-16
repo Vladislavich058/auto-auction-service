@@ -1,6 +1,7 @@
 package com.valery.controllers;
 
 import java.io.IOException;
+import java.lang.ProcessHandle.Info;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,6 +32,7 @@ public class ManagerController {
 
 	@GetMapping("/getLots")
 	public Iterable<Lot> getLots(@AuthenticationPrincipal User user) {
+		log.info(user.getId() + "");
 		return managerService.getLots(user.getId());
 	}
 

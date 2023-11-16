@@ -221,19 +221,17 @@ const LotForm = () => {
                 </div>
                 <div className="mb-1 flex flex-col gap-3.5">
                   <Input
-                    size="lg"
-                    label="ВИН кузова*"
-                    {...register("vinNumber", {
-                      required: "Поле обязательно к заполнению",
-                      pattern: {
-                        value:
-                          /^[A-HJ-NPR-Za-hj-npr-z\d]{8}[\dX][A-HJ-NPR-Za-hj-npr-z\d]{2}\d{6}$/,
-                        message: "Неверный формат ВИН номера!",
-                      },
-                    })}
-                    error={errors?.vinNumber ? true : false}
-                    onChange={(e) => handleChangeCar(e)}
-                  />
+                      crossOrigin={undefined} size="lg"
+                      label="ВИН кузова*"
+                      {...register("vinNumber", {
+                        required: "Поле обязательно к заполнению",
+                        pattern: {
+                          value: /^[A-HJ-NPR-Za-hj-npr-z\d]{8}[\dX][A-HJ-NPR-Za-hj-npr-z\d]{2}\d{6}$/,
+                          message: "Неверный формат ВИН номера!"
+                        }
+                      })}
+                      error={errors?.vinNumber ? true : false}
+                      onChange={(e) => handleChangeCar(e)}                  />
                   <div className=" text-red-500 font-raleway -mt-2">
                     {errors?.vinNumber && (
                       <p>

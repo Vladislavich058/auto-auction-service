@@ -1,6 +1,7 @@
 import { Button, Chip, Typography } from "@material-tailwind/react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { getLastBid } from "utils/bids";
 
 const LotRow = ({ lot, classes, type }) => {
   const router = useNavigate();
@@ -135,7 +136,7 @@ const LotRow = ({ lot, classes, type }) => {
             color="blue-gray"
             className="font-normal uppercase"
           >
-            $ {lot.bids.lenght ? "" : "0"}
+            $ {getLastBid(lot)}
           </Typography>
           <Button
             className="flex justify-center"

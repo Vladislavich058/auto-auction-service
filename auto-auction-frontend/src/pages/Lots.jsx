@@ -14,9 +14,6 @@ const Lots = ({ type = "" }) => {
     query: "",
     filter: "",
   });
-  const [openDialog, setOpenDialog] = useState(false);
-
-  const handleOpenDialog = () => setOpenDialog(!openDialog);
 
   const sortedAndSearchAndFilterLots = useLots(
     lots,
@@ -30,8 +27,11 @@ const Lots = ({ type = "" }) => {
       if (type === "manager") {
         const response = await ManagerService.getLots();
         setLots(response.data);
-      } else {
+      } else if (type === "admin") {
         const response = await LotService.getAllLots();
+        setLots(response.data);
+      } else {
+        const response = await LotService.getAllValidatedLots();
         setLots(response.data);
       }
     });
@@ -60,7 +60,6 @@ const Lots = ({ type = "" }) => {
             sortedAndSearchAndFilterLots={sortedAndSearchAndFilterLots}
             filter={filter}
             setFilter={setFilter}
-            setOpenDialog={setOpenDialog}
             type={type}
           />
         </div>

@@ -7,6 +7,8 @@ public interface LotService {
 	Lot getLotById(Long id) throws NotFoundException;
 
 	Iterable<Lot> getAllLots();
+	
+	Iterable<Lot> getAllValidatedLots();
 
 	Iterable<Lot> getNewLots();
 }

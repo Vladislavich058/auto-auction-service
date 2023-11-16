@@ -19,6 +19,7 @@ const Login = () => {
     password: "",
   });
   const { login } = useAuth();
+  const router = useNavigate();
 
   const [
     fetchLogin,
@@ -39,8 +40,6 @@ const Login = () => {
   } = useForm({
     mode: "onBlur",
   });
-  const router = useNavigate();
-  console.log(router)
 
   const handleLogin = async () => {
     fetchLogin();

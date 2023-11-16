@@ -1,6 +1,7 @@
 package com.valery.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,14 +22,19 @@ public class LotController {
 	public Lot getLotById(@PathVariable("id") Long id) throws NotFoundException {
 		return lotService.getLotById(id);
 	}
-	
+
 	@GetMapping("/getAllLots")
-	public Iterable<Lot> getAllLots() throws NotFoundException {
+	public Iterable<Lot> getAllLots() {
 		return lotService.getAllLots();
 	}
-	
+
+	@GetMapping("/getAllValidatedLots")
+	public Iterable<Lot> getAllValidatedLots() {
+		return lotService.getAllValidatedLots();
+	}
+
 	@GetMapping("/getNewLots")
-	public Iterable<Lot> getNewLots(){
+	public Iterable<Lot> getNewLots() {
 		return lotService.getNewLots();
 	}
 }

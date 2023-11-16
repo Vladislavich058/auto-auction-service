@@ -1,4 +1,5 @@
 import axios from "axios";
+import authHeader from "utils/authHeader";
 const API_URL = "http://localhost:8080/api/lots/";
 
 export default class LotService {
@@ -8,7 +9,14 @@ export default class LotService {
   }
 
   static async getAllLots() {
-    const response = await axios.get(API_URL + "getAllLots");
+    const response = await axios.get(API_URL + "getAllLots", {
+      headers: authHeader(),
+    });
+    return response;
+  }
+
+  static async getAllValidatedLots() {
+    const response = await axios.get(API_URL + "getAllValidatedLots");
     return response;
   }
 

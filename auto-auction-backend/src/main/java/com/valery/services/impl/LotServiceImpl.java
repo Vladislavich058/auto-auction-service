@@ -3,6 +3,7 @@ package com.valery.services.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.valery.entities.ELotStatus;
 import com.valery.entities.Lot;
 import com.valery.exceptions.NotFoundException;
 import com.valery.repositories.LotRepository;
@@ -23,10 +24,15 @@ public class LotServiceImpl implements LotService {
 	public Iterable<Lot> getAllLots() {
 		return lotRepository.findAll();
 	}
+	
+	@Override
+	public Iterable<Lot> getAllValidatedLots() {
+		return lotRepository.findByStatusLotStatus(ELotStatus.VALIDATED);
+	}
 
 	@Override
 	public Iterable<Lot> getNewLots() {
-		return lotRepository.findAllOrderByCreateDateTimeAsc();
+		return lotRepository.findFirst3ByStatusLotStatusOrderByCreateDateTimeDesc(ELotStatus.VALIDATED);
 	}
 
 }

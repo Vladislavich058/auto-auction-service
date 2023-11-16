@@ -9,6 +9,7 @@ import {
   IconButton,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
+import { getLastBid } from "utils/bids";
 
 const LotNewItem = ({ lot }) => {
   //   const images = car.files.map((file) => ({
@@ -124,7 +125,7 @@ const LotNewItem = ({ lot }) => {
               key={file.name}
               src={file.uri}
               alt={file.name}
-              className="object-cover overflow-hidden object-center"
+              className="h-[300px] w-[400px] object-cover overflow-hidden object-center"
             />
           ))}
         </Carousel>
@@ -139,7 +140,7 @@ const LotNewItem = ({ lot }) => {
         <Typography className="!font-raleway">
           Текущая ставка:{" "}
           <span className="text-2xl uppercase text-green-400">
-            $ {lot.bids.length ? "" : "0"}
+            $ {getLastBid(lot)}
           </span>
         </Typography>
         <div className="mt-5">
