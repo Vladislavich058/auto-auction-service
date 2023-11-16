@@ -1,0 +1,35 @@
+import Home from "pages/Home";
+import Login from "pages/Login";
+import LotForm from "pages/LotForm";
+import LotIdPage from "pages/LotIdPage";
+import Lots from "pages/Lots";
+import Register from "pages/Register";
+import Users from "pages/Users";
+import React from "react";
+
+export const publicRoutes = [
+    {path: '/login', element: <Login/>},
+    {path: '/register', element: <Register type="register"/>},
+    {path: '/', element: <Home/>},
+    {path: 'lots/:id', element: <LotIdPage />},
+    {path: 'lots', element: <Lots />},
+]
+
+export const adminRoutes = [
+    {path: '', element: <Register type="info" />},
+    {path: 'managers', element: <Users type="managers" />},
+    {path: 'clients', element: <Users type="clients" />},
+    {path: 'lots', element: <Lots type="admin" />},
+    {path: 'lots/:id', element: <LotIdPage type="admin" />},
+]
+
+export const clientRoutes = [
+    {path: '', element: <Register type="info" />},
+]
+
+export const managerRoutes = [
+    {path: '', element: <Register type="info" />},
+    {path: 'lots', element: <Lots type="manager" />},
+    {path: 'addLot', element: <LotForm />},
+    {path: 'lots/:id', element: <LotIdPage type="manager" />},
+]

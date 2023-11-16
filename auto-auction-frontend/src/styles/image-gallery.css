@@ -1,0 +1,15 @@
+.image-gallery-thumbnail.active,
+.image-gallery-thumbnail:hover {
+  border: 2px solid rgba(33, 33, 33, 0.5) !important;
+  padding: 2px;
+  border-radius: 5px !important;
+}
+
+.image-gallery-slides {
+  border-radius: 10px !important;
+}
+
+.image-gallery-thumbnail-image,
+.image-gallery-thumbnail {
+  border-radius: 5px !important;
+}
