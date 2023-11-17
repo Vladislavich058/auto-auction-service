@@ -9,4 +9,18 @@ export default class ClientService {
     });
     return response;
   }
+
+  static async getLots() {
+    const response = await axios.get(API_URL + "getLots", {
+      headers: authHeader(),
+    });
+    return response;
+  }
+
+  static async getLotById(id) {
+    const response = await axios.get(API_URL + `getLotById/${id}`, {
+      headers: authHeader(),
+    });
+    return response;
+  }
 }

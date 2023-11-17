@@ -61,6 +61,20 @@ export default class AdminService {
     return response;
   }
 
+  static async getAllLots() {
+    const response = await axios.get(API_URL + "getAllLots", {
+      headers: authHeader(),
+    });
+    return response;
+  }
+
+  static async getLotById(id) {
+    const response = await axios.get(API_URL + "getLotById/" + id, {
+      headers: authHeader(),
+    });
+    return response;
+  }
+
   static async approveLotById(id) {
     const response = await axios.get(API_URL + "approveLotById/" + id, {
       headers: authHeader(),

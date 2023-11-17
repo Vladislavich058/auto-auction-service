@@ -1,16 +1,18 @@
 import { Button, Chip, Typography } from "@material-tailwind/react";
+import { useAuth } from "hooks/useAuth";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { getLastBid } from "utils/bids";
 
-const LotRow = ({ lot, classes, type }) => {
+const LotRow = ({ lot, classes, type, setOpenDialog, setOpenLot }) => {
   const router = useNavigate();
+  const { authUser } = useAuth();
   return (
     <tr>
       <td className={classes}>
         <div className="flex justify-center">
           <img
-            className="w-36"
+            className="w-36 object-cover overflow-hidden object-center h-28"
             src={lot.car.files[0].uri}
             alt={lot.car.files[0].name}
           />
@@ -142,12 +144,26 @@ const LotRow = ({ lot, classes, type }) => {
             className="flex justify-center"
             size="sm"
             onClick={
-              type === "admin" || type === "manager"
+              type === "admin" || type === "manager" || type === "client"
                 ? () => router(`/profile/lots/${lot.id}`)
                 : () => router(`/lots/${lot.id}`)
             }
           >
             Просмотреть
+          </Button>
+          {(type === "client" &&
+            lot.bids.client &&
+            lot.bids.client.id === authUser.id) ||
+            (type === "manager" && lot.manager.id === authUser.id)}
+          <Button
+            className="flex justify-center"
+            size="sm"
+            onClick={() => {
+              setOpenDialog(true);
+              setOpenLot(lot);
+            }}
+          >
+            История ставок
           </Button>
         </div>
       </td>

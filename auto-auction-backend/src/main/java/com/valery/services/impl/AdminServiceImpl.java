@@ -111,4 +111,14 @@ public class AdminServiceImpl implements AdminService {
 		return lotRepository.save(lot).getId();
 	}
 
+	@Override
+	public Iterable<Lot> getAllLots() {
+		return lotRepository.findAll();
+	}
+
+	@Override
+	public Lot getLotById(Long id) throws NotFoundException {
+		return lotRepository.findById(id).orElseThrow(() -> new NotFoundException("Лот с id " + id + " не найден!"));
+	}
+
 }

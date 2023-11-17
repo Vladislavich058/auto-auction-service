@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 function LotsNew() {
   const [lots, setLots] = useState([]);
 
-  const [fetchLots, isLotsLoading, lotError, open, setOpen] = useFetching(
+  const {fetching: fetchLots, isLoading : isLotsLoading, error: lotError, errorOpen : open, setErrorOpen : setOpen} = useFetching(
     async () => {
       const response = await LotService.getNewLots();
       setLots(response.data);

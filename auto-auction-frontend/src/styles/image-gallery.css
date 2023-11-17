@@ -13,3 +13,10 @@
 .image-gallery-thumbnail {
   border-radius: 5px !important;
 }
+
+.image-gallery-image {
+  height: 350px!important;
+  object-fit: cover!important;
+  overflow: hidden!important;
+  object-position: center!important;
+}

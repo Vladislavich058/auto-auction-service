@@ -1,8 +1,4 @@
-// @ts-nocheck
-
-import {
-    Spinner
-} from "@material-tailwind/react";
+import { Spinner } from "@material-tailwind/react";
 import AdminService from "API/AdminService";
 import { useFetching } from "hooks/useFetching";
 import { useUsers } from "hooks/useUsers";
@@ -30,13 +26,13 @@ const Users = ({ type }) => {
     filter.filter
   );
 
-  const [
-    fetchManagers,
-    isManagersLoading,
-    managersError,
-    managersErrorOpen,
-    setManagersErrorOpen,
-  ] = useFetching(async () => {
+  const {
+    fetching: fetchManagers,
+    isLoading: isManagersLoading,
+    error: managersError,
+    errorOpen: managersErrorOpen,
+    setErrorOpen: setManagersErrorOpen,
+  } = useFetching(async () => {
     if (type === "managers") {
       const response = await AdminService.getAllManagers();
       setUsers(response.data);
@@ -80,15 +76,12 @@ const Users = ({ type }) => {
   //     setPage(page);
   //   };
 
-  useEffect(
-    () => {
-      fetchManagers();
-    },
-    [
-      /*page*/
-      type
-    ]
-  );
+  useEffect(() => {
+    fetchManagers();
+  }, [
+    /*page*/
+    type,
+  ]);
 
   return (
     <div className="py-10">

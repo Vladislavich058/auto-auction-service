@@ -1,7 +1,6 @@
 package com.valery.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,14 +22,9 @@ public class LotController {
 		return lotService.getLotById(id);
 	}
 
-	@GetMapping("/getAllLots")
-	public Iterable<Lot> getAllLots() {
-		return lotService.getAllLots();
-	}
-
-	@GetMapping("/getAllValidatedLots")
-	public Iterable<Lot> getAllValidatedLots() {
-		return lotService.getAllValidatedLots();
+	@GetMapping("/getLots")
+	public Iterable<Lot> getLots() {
+		return lotService.getLots();
 	}
 
 	@GetMapping("/getNewLots")

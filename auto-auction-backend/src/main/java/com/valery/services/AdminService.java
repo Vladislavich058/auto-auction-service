@@ -26,4 +26,8 @@ public interface AdminService {
 	Long approveLot(Long id) throws NotFoundException;
 	
 	Long refuseLot(Long id) throws NotFoundException;
+	
+	Iterable<Lot> getAllLots();
+	
+	Lot getLotById(Long id) throws NotFoundException;
 }

@@ -113,7 +113,7 @@ public class Initializer implements CommandLineRunner {
 							.manager(userRepository.findById(2L)
 									.orElseThrow(() -> new NotFoundException("Менеджер с id 2 не найден!")))
 							.minBid(1000D).maxBid(25000D).createDateTime(LocalDateTime.now())
-							.status(lotStatusRepository.findByLotStatus(ELotStatus.IN_PROCESSING)
+							.status(lotStatusRepository.findByLotStatus(ELotStatus.VALIDATED)
 									.orElseThrow(() -> new NotFoundException("Статус 'in proccessing' не найдена!")))
 							.build(),
 					Lot.builder()
@@ -132,7 +132,7 @@ public class Initializer implements CommandLineRunner {
 							.manager(userRepository.findById(2L)
 									.orElseThrow(() -> new NotFoundException("Менеджер с id 2 не найден!")))
 							.minBid(10000D).maxBid(50000D).createDateTime(LocalDateTime.now())
-							.status(lotStatusRepository.findByLotStatus(ELotStatus.IN_PROCESSING)
+							.status(lotStatusRepository.findByLotStatus(ELotStatus.VALIDATED)
 									.orElseThrow(() -> new NotFoundException("Статус 'in proccessing' не найдена!")))
 							.build(),
 					Lot.builder()

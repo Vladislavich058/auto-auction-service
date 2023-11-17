@@ -1,8 +1,9 @@
 import {
   Button,
-  Card, Input,
+  Card,
+  Input,
   Spinner,
-  Typography
+  Typography,
 } from "@material-tailwind/react";
 import AdminService from "API/AdminService";
 import AuthService from "API/AuthService";
@@ -38,44 +39,54 @@ const Register = ({ type, setOpenUserModal = null, fetchManagers = null }) => {
     mode: "onBlur",
   });
 
-  const [fetchUser, isUserLoading, userError, userErrorOpen, setUserErrorOpen] =
-    useFetching(async () => {
-      const response = await AuthService.getCurrentUser();
-      setUser(response);
-      reset();
-    });
+  const {
+    fetching: fetchUser,
+    isLaoding: isUserLoading,
+    error: userError,
+    errorOpen: userErrorOpen,
+    setErrorOpen: setUserErrorOpen,
+  } = useFetching(async () => {
+    const response = await AuthService.getCurrentUser();
+    setUser(response);
+    reset();
+  });
 
-  const [
-    fetchRegister,
-    isRegisterLoading,
-    registerError,
-    registerErrorOpen,
-    setRegisterErrorOpen,
-  ] = useFetching(async () => {
+  const {
+    fetching: fetchRegister,
+    isLaoding: isRegisterLoading,
+    error: registerError,
+    errorOpen: registerErrorOpen,
+    setErrorOpen: setRegisterErrorOpen,
+  } = useFetching(async () => {
     await AuthService.register({ user });
     setOpenSuccessAlert(true);
     setTimeout(() => router("/login"), 4000);
   });
 
-  const [
-    fetchUpdate,
-    isUpdateLoading,
-    updateError,
-    updateErrorOpen,
-    setUpdateErrorOpen,
-  ] = useFetching(async () => {
+  const {
+    fetching: fetchUpdate,
+    isLaoding: isUpdateLoading,
+    error: updateError,
+    errorOpen: updateErrorOpen,
+    setErrorOpen: setUpdateErrorOpen,
+  } = useFetching(async () => {
     const response = await AuthService.updateCurrentUser({ user });
     addAuthUser(response);
     fetchUser();
     reset();
   });
 
-  const [fetchAdd, isAddLoading, addError, addErrorOpen, setAddErrorOpen] =
-    useFetching(async () => {
-      await AdminService.addManager({ user });
-      setOpenUserModal(false);
-      fetchManagers();
-    });
+  const {
+    fetching: fetchAdd,
+    isLaoding: isAddLoading,
+    error: addError,
+    errorOpen: addErrorOpen,
+    setErrorOpen: setAddErrorOpen,
+  } = useFetching(async () => {
+    await AdminService.addManager({ user });
+    setOpenUserModal(false);
+    fetchManagers();
+  });
 
   useEffect(() => {
     if (authUser && type === "info") {

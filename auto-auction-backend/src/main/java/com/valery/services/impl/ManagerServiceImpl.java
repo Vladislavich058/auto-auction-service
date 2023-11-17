@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.valery.dtos.LotDTO;
+import com.valery.dtos.SaleBidDTO;
+import com.valery.entities.Bid;
 import com.valery.entities.ELotStatus;
 import com.valery.entities.File;
 import com.valery.entities.Lot;
@@ -53,11 +55,6 @@ public class ManagerServiceImpl implements ManagerService {
 	UserRepository userRepository;
 
 	@Override
-	public Iterable<Lot> getLots(Long id) {
-		return lotRepository.findByManagerId(id);
-	}
-
-	@Override
 	public Lot addLot(User user, LotDTO lotDTO, MultipartFile[] files)
 			throws CarAlreadyExistsException, NotFoundException, IOException {
 		if (carRepository.findByVinNumber(lotDTO.getCar().getVinNumber()).isPresent()) {
@@ -78,6 +75,30 @@ public class ManagerServiceImpl implements ManagerService {
 		newLot.getCar().setFiles(photos);
 
 		return lotRepository.save(newLot);
+	}
+
+	@Override
+	public Iterable<Lot> getLots(User user) {
+		return lotRepository.findByManagerId(user.getId());
+	}
+
+	@Override
+	public Lot getLotById(User user, Long id) throws NotFoundException {
+		return lotRepository.findByIdAndManagerId(id, user.getId())
+				.orElseThrow(() -> new NotFoundException("Лот с id " + id + " не найден!"));
+	}
+
+	@Override
+	public Lot saleLot(Long id, SaleBidDTO saleBidDTO) throws NotFoundException {
+		User client = userRepository.findById(saleBidDTO.clientId())
+				.orElseThrow(() -> new NotFoundException("Пользователь с id " + saleBidDTO.clientId() + " не найден!"));
+		Lot lot = lotRepository.findById(id).orElseThrow(() -> new NotFoundException("Лот с id " + id + " не найден!"));
+		lot.setSoldBid(saleBidDTO.bid());
+		lot.setClient(client);
+		lot.setCloseDateTime(LocalDateTime.now());
+		lot.setStatus(lotStatusRepository.findByLotStatus(ELotStatus.SOLD)
+				.orElseThrow(() -> new NotFoundException("Статус 'sold' не найден!")));
+		return lotRepository.save(lot);
 	}
 
 }

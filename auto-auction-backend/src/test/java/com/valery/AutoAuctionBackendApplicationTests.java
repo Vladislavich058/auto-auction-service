@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.valery.controllers.CarController;
+import com.valery.controllers.LotController;
 
 @SpringBootTest
 class AutoAuctionBackendApplicationTests {
 
 	@Autowired
-	private CarController controller;
+	private LotController controller;
 
 	@DisplayName("First example test case")
 	@Test

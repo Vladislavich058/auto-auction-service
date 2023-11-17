@@ -36,7 +36,7 @@ const LotForm = () => {
     minBid: null,
     maxBid: null,
   });
-  const [files, setFiles] = useState();
+  const [files, setFiles] = useState([]);
 
   const router = useNavigate();
 
@@ -92,22 +92,27 @@ const LotForm = () => {
 
   console.log(lot.car.VIN);
 
-  const [fetchAdd, isAddLoading, addError, addErrorOpen, setAddErrorOpen] =
-    useFetching(async () => {
-      console.log(lot);
-      let formData = new FormData();
-      formData.append(
-        "lot",
-        new Blob([JSON.stringify(lot)], {
-          type: "application/json",
-        })
-      );
-      for (const key of Object.keys(files)) {
-        formData.append("files", files[key]);
-      }
-      await ManagerService.addLot(formData);
-      router("/profile/lots");
-    });
+  const {
+    fetching: fetchAdd,
+    isLoading: isAddLoading,
+    error: addError,
+    errorOpen: addErrorOpen,
+    setErrorOpen: setAddErrorOpen,
+  } = useFetching(async () => {
+    console.log(lot);
+    let formData = new FormData();
+    formData.append(
+      "lot",
+      new Blob([JSON.stringify(lot)], {
+        type: "application/json",
+      })
+    );
+    for (const key of Object.keys(files)) {
+      formData.append("files", files[key]);
+    }
+    await ManagerService.addLot(formData);
+    router("/profile/lots");
+  });
 
   const {
     register,
@@ -221,17 +226,20 @@ const LotForm = () => {
                 </div>
                 <div className="mb-1 flex flex-col gap-3.5">
                   <Input
-                      crossOrigin={undefined} size="lg"
-                      label="ВИН кузова*"
-                      {...register("vinNumber", {
-                        required: "Поле обязательно к заполнению",
-                        pattern: {
-                          value: /^[A-HJ-NPR-Za-hj-npr-z\d]{8}[\dX][A-HJ-NPR-Za-hj-npr-z\d]{2}\d{6}$/,
-                          message: "Неверный формат ВИН номера!"
-                        }
-                      })}
-                      error={errors?.vinNumber ? true : false}
-                      onChange={(e) => handleChangeCar(e)}                  />
+                    crossOrigin={undefined}
+                    size="lg"
+                    label="ВИН кузова*"
+                    {...register("vinNumber", {
+                      required: "Поле обязательно к заполнению",
+                      pattern: {
+                        value:
+                          /^[A-HJ-NPR-Za-hj-npr-z\d]{8}[\dX][A-HJ-NPR-Za-hj-npr-z\d]{2}\d{6}$/,
+                        message: "Неверный формат ВИН номера!",
+                      },
+                    })}
+                    error={errors?.vinNumber ? true : false}
+                    onChange={(e) => handleChangeCar(e)}
+                  />
                   <div className=" text-red-500 font-raleway -mt-2">
                     {errors?.vinNumber && (
                       <p>

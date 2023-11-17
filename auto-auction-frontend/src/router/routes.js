@@ -35,7 +35,11 @@ export const clientRoutes = [
   {
     path: "/profile",
     element: <UserMenu type="manager" />,
-    nestedElement: [{ path: "", element: <Register type="info" /> }],
+    nestedElement: [
+      { path: "", element: <Register type="info" /> },
+      { path: "lots", element: <Lots type="client" /> },
+      { path: "lots/:id", element: <LotIdPage type="client" /> },
+    ],
   },
   { path: "/lots/:id", element: <LotIdPage type="client" /> },
   { path: "/lots", element: <Lots type="client" /> },

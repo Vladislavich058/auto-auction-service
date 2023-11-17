@@ -26,13 +26,13 @@ const Users = ({ type }) => {
     filter.filter
   );
 
-  const [
-    fetchManagers,
-    isManagersLoading,
-    managersError,
-    managersErrorOpen,
-    setManagersErrorOpen,
-  ] = useFetching(async () => {
+  const {
+    fetching: fetchManagers,
+    isLoading: isManagersLoading,
+    error: managersError,
+    errorOpen: managersErrorOpen,
+    setErrorOpen: setManagersErrorOpen,
+  } = useFetching(async () => {
     if (type === "managers") {
       const response = await AdminService.getAllManagers();
       setUsers(response.data);

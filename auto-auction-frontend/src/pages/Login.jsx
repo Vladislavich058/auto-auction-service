@@ -21,13 +21,13 @@ const Login = () => {
   const { login } = useAuth();
   const router = useNavigate();
 
-  const [
-    fetchLogin,
-    isLoginLoading,
-    loginError,
-    loginErrorOpen,
-    setLoginErrorOpen,
-  ] = useFetching(async () => {
+  const {
+    fetching: fetchLogin,
+    isLoading: isLoginLoading,
+    error: loginError,
+    errorOpen: loginErrorOpen,
+    seterrorOpen: setLoginErrorOpen,
+  } = useFetching(async () => {
     const response = await AuthService.login({ user });
     login(response);
     router("/profile");

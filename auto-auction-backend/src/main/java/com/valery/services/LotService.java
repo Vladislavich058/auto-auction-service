@@ -6,9 +6,7 @@ import com.valery.exceptions.NotFoundException;
 public interface LotService {
 	Lot getLotById(Long id) throws NotFoundException;
 
-	Iterable<Lot> getAllLots();
-	
-	Iterable<Lot> getAllValidatedLots();
+	Iterable<Lot> getLots();
 
 	Iterable<Lot> getNewLots();
 }

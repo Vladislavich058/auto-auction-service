@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.valery.dtos.UserDTO;
+import com.valery.entities.Lot;
 import com.valery.entities.User;
 import com.valery.exceptions.NotFoundException;
 import com.valery.exceptions.UserAlreadyExistsException;
@@ -53,6 +54,16 @@ public class AdminController {
 	@PostMapping("/addManager")
 	public User addManager(@Valid @RequestBody UserDTO userDTO) throws NotFoundException, UserAlreadyExistsException {
 		return adminService.addManager(userDTO);
+	}
+
+	@GetMapping("/getAllLots")
+	public Iterable<Lot> getAllLots() {
+		return adminService.getAllLots();
+	}
+
+	@GetMapping("/getLotById/{id}")
+	public Lot getLotById(@PathVariable("id") Long id) throws NotFoundException {
+		return adminService.getLotById(id);
 	}
 
 	@GetMapping("/approveLotById/{id}")

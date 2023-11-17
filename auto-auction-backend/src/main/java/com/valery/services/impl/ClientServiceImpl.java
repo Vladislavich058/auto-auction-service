@@ -1,6 +1,7 @@
 package com.valery.services.impl;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,19 @@ public class ClientServiceImpl implements ClientService {
 					.orElseThrow(() -> new NotFoundException("Статус 'sold' не найден!")));
 		}
 		return lotRepository.save(lot);
+	}
+
+	@Override
+	public Iterable<Lot> getLots(User user) {
+		return lotRepository.findByBidsClientId(user.getId());
+	}
+
+	@Override
+	public Lot getLotById(User user, Long id) throws NotFoundException {
+		return lotRepository
+				.findByBidsClientIdAndIdAndStatusLotStatusIn(user.getId(), id,
+						Arrays.asList(ELotStatus.SOLD, ELotStatus.VALIDATED))
+				.orElseThrow(() -> new NotFoundException("Лот с id " + id + " не найден!"));
 	}
 
 }

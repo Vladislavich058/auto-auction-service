@@ -1,4 +1,6 @@
 import { Spinner } from "@material-tailwind/react";
+import AdminService from "API/AdminService";
+import ClientService from "API/ClientService";
 import LotService from "API/LotService";
 import ManagerService from "API/ManagerService";
 import LotTable from "components/LotTable";
@@ -22,19 +24,27 @@ const Lots = ({ type = "" }) => {
     filter.filter
   );
 
-  const [fetchLots, isLotsLoading, lotsError, lotsErrorOpen, setLotsErrorOpen] =
-    useFetching(async () => {
-      if (type === "manager") {
-        const response = await ManagerService.getLots();
-        setLots(response.data);
-      } else if (type === "admin") {
-        const response = await LotService.getAllLots();
-        setLots(response.data);
-      } else {
-        const response = await LotService.getAllValidatedLots();
-        setLots(response.data);
-      }
-    });
+  const {
+    fetching: fetchLots,
+    isLoading: isLotsLoading,
+    error: lotsError,
+    errorOpen: lotsErrorOpen,
+    serErrorOpen: setLotsErrorOpen,
+  } = useFetching(async () => {
+    if (type === "manager") {
+      const response = await ManagerService.getLots();
+      setLots(response.data);
+    } else if (type === "admin") {
+      const response = await AdminService.getAllLots();
+      setLots(response.data);
+    } else if (type === "client") {
+      const response = await ClientService.getLots();
+      setLots(response.data);
+    } else {
+      const response = await LotService.getLots();
+      setLots(response.data);
+    }
+  });
 
   useEffect(() => {
     fetchLots();
@@ -45,7 +55,6 @@ const Lots = ({ type = "" }) => {
       <MyAlert
         type="error"
         open={lotsErrorOpen}
-        // @ts-ignore
         onClose={() => setLotsErrorOpen(false)}
       >
         {lotsError}
@@ -60,6 +69,7 @@ const Lots = ({ type = "" }) => {
             sortedAndSearchAndFilterLots={sortedAndSearchAndFilterLots}
             filter={filter}
             setFilter={setFilter}
+            fetchLots={fetchLots}
             type={type}
           />
         </div>

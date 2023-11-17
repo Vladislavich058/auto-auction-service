@@ -15,6 +15,7 @@ import {
 import AdminService from "API/AdminService";
 import ClientService from "API/ClientService";
 import LotService from "API/LotService";
+import ManagerService from "API/ManagerService";
 import MyAlert from "components/UI/Alert/MyAlert";
 import { useAuth } from "hooks/useAuth";
 import { useFetching } from "hooks/useFetching";
@@ -34,7 +35,9 @@ const LotIdPage = ({ type = "" }) => {
     status: {},
     manager: {},
     client: {},
+    createDateTime: "",
   });
+
   const [images, setImages] = useState();
   const [error, setError] = useState("");
   const [errorOpen, setErrorOpen] = useState(false);
@@ -70,16 +73,28 @@ const LotIdPage = ({ type = "" }) => {
     addBid(lot.id, bid);
   };
 
-  const [fetchLot, isLotLoading, lotError, lotErrorOpen, setLotErrorOpen] =
-    useFetching(async () => {
-      const response = await LotService.getLotById(params.id);
-      fillImages(response.data);
-      if (type === "" || type === "client") {
-        setBid({ value: getMinBid(response.data) });
-        reset();
-      }
-      setLot(response.data);
-    });
+  const {
+    fetching: fetchLot,
+    isLoading: isLotLoading,
+    error: lotError,
+    errorOpen: lotErrorOpen,
+    setErrorOpen: setLotErrorOpen,
+  } = useFetching(async () => {
+    let response = {};
+    if (type === "admin") {
+      response = await AdminService.getLotById(params.id);
+    } else if (type === "manager") {
+      response = await ManagerService.getLotById(params.id);
+    } else if (type === "client") {
+      response = await ClientService.getLotById(params.id);
+    } else {
+      response = await LotService.getLotById(params.id);
+      setBid({ value: getMinBid(response.data) });
+      reset();
+    }
+    fillImages(response.data);
+    setLot(response.data);
+  });
 
   const vehicleDetails = [
     {
@@ -179,15 +194,15 @@ const LotIdPage = ({ type = "" }) => {
       label: "Телефон",
       value:
         type === "manager"
-          ? lot.manager && lot.manager.phone
-          : lot.client && lot.client.phone,
+          ? lot.client && lot.client.phone
+          : lot.manager && lot.manager.phone,
     },
     {
       label: "Email",
       value:
         type === "manager"
-          ? lot.manager && lot.manager.email
-          : lot.client && lot.client.email,
+          ? lot.client && lot.client.email
+          : lot.manager && lot.manager.email,
     },
   ];
 
@@ -254,6 +269,8 @@ const LotIdPage = ({ type = "" }) => {
         <div className="flex justify-center mt-12">
           <Spinner />
         </div>
+      ) : lotError ? (
+        ""
       ) : (
         <div>
           <Card className="p-5">
@@ -264,8 +281,7 @@ const LotIdPage = ({ type = "" }) => {
           <div className="flex flex-wrap justify-around">
             {lot.car.files && lot.car.files.length ? (
               <div className="xl:w-[500px] lg:w-[400px] mt-5 relative">
-                {(type === "manager" && authUser.id === lot.manager.id) ||
-                type === "admin" ? (
+                {type === "manager" || type === "admin" || type === "client" ? (
                   <div className="absolute z-10 top-1 left-1">
                     <Chip
                       variant="filled"
@@ -293,6 +309,22 @@ const LotIdPage = ({ type = "" }) => {
                           : "blue-gray"
                       }
                     />
+                  </div>
+                ) : (
+                  ""
+                )}
+                {type === "client" && lot.status.lotStatus === "SOLD" ? (
+                  <div className="z-10 absolute right-1 top-1">
+                    <Chip
+                      variant="filled"
+                      size="sm"
+                      color={lot.client.id === authUser.id ? "green" : "red"}
+                      value={
+                        lot.client.id === authUser.id ? "Выигран" : "Проигран"
+                      }
+                    />
+
+                    {/* <div className="text-red-500 text-opacity-70 flex justify-center "></div> */}
                   </div>
                 ) : (
                   ""
@@ -378,6 +410,11 @@ const LotIdPage = ({ type = "" }) => {
                     </div>
                   </div>
                 ))}
+                <div className="mt-3 flex justify-end px-5 text-gray-400">
+                  {`${new Date(lot.createDateTime).getDay()}.${new Date(
+                    lot.createDateTime
+                  ).getMonth()}.${new Date(lot.createDateTime).getFullYear()}`}
+                </div>
                 {type === "admin" &&
                 lot.status.lotStatus === "IN_PROCESSING" ? (
                   <div className="p-3 w-full flex flex-wrap justify-around">
@@ -404,22 +441,24 @@ const LotIdPage = ({ type = "" }) => {
                   ""
                 )}
               </Card>
-              {type === "manager" &&
-              authUser.id === lot.manager.id &&
-              lot.status.lotStatus === "SOLD" ? (
+              {(type === "manager" && lot.status.lotStatus === "SOLD") ||
+              (type === "client" &&
+                lot.client &&
+                lot.client.id === authUser.id) ? (
                 <Button
                   className="mt-5"
                   fullWidth
                   onClick={() => setOpenDialog(true)}
                 >
-                  Показать клиента
+                  Показать {type === "manager" ? "клиента" : "менеджера"}
                 </Button>
               ) : (
                 ""
               )}
             </div>
 
-            {type === "" || type === "client" ? (
+            {(type === "" || type === "client") &&
+            lot.status.lotStatus === "VALIDATED" ? (
               <Card className="xl:w-[350px] lg:w-[250px] mt-5 h-full pb-2">
                 <div className="py-2 px-5 border-b-[1px] border-gray-300">
                   <Typography variant="h6" color="black" className="uppercase">
