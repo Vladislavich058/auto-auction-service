@@ -203,13 +203,14 @@ const LotTable = ({
                       ""
                     )}
                     <th className={classes}>
-                      {new Date(bidDateTime).getDay()}.
-                      {new Date(bidDateTime).getMonth()}.
-                      {new Date(bidDateTime).getFullYear()}
+                      {new Date(bidDateTime).toLocaleDateString("en-US")}
                     </th>
                     <th className={classes}>
-                      {new Date(bidDateTime).getHours()}:
-                      {new Date(bidDateTime).getMinutes()}
+                      {new Date(bidDateTime).toLocaleTimeString("en-US", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hourCycle: "h24",
+                      })}
                     </th>
                     <th className={classes + " text-green-500"}>{bidCost} $</th>
                     {type === "manager" &&

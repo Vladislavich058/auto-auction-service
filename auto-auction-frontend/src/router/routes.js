@@ -41,7 +41,7 @@ export const clientRoutes = [
       { path: "lots/:id", element: <LotIdPage type="client" /> },
     ],
   },
-  { path: "/lots/:id", element: <LotIdPage type="client" /> },
+  { path: "/lots/:id", element: <LotIdPage type="" /> },
   { path: "/lots", element: <Lots type="client" /> },
 ];
 

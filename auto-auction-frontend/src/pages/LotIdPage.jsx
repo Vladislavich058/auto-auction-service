@@ -87,6 +87,8 @@ const LotIdPage = ({ type = "" }) => {
       response = await ManagerService.getLotById(params.id);
     } else if (type === "client") {
       response = await ClientService.getLotById(params.id);
+      setBid({ value: getMinBid(response.data) });
+      reset();
     } else {
       response = await LotService.getLotById(params.id);
       setBid({ value: getMinBid(response.data) });
@@ -411,9 +413,7 @@ const LotIdPage = ({ type = "" }) => {
                   </div>
                 ))}
                 <div className="mt-3 flex justify-end px-5 text-gray-400">
-                  {`${new Date(lot.createDateTime).getDay()}.${new Date(
-                    lot.createDateTime
-                  ).getMonth()}.${new Date(lot.createDateTime).getFullYear()}`}
+                  {new Date(lot.createDateTime).toLocaleDateString("en-US")}
                 </div>
                 {type === "admin" &&
                 lot.status.lotStatus === "IN_PROCESSING" ? (
@@ -483,9 +483,9 @@ const LotIdPage = ({ type = "" }) => {
                 <form
                   className="py-5 px-5"
                   onSubmit={
-                    type === ""
-                      ? () => router("/login")
-                      : handleSubmit(handleAddBid)
+                    authUser
+                      ? handleSubmit(handleAddBid)
+                      : () => router("/login")
                   }
                 >
                   <div className="mb-1 flex flex-col gap-3.5">
