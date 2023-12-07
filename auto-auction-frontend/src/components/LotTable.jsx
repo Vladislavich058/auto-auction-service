@@ -12,7 +12,7 @@ import {
   Tab,
   Tabs,
   TabsHeader,
-  Typography,
+  Typography
 } from "@material-tailwind/react";
 import ManagerService from "API/ManagerService";
 import React, { useState } from "react";
@@ -167,7 +167,7 @@ const LotTable = ({
           </tbody>
         </table>
       </CardBody>
-      <Dialog open={openDialog} handler={handleOpenDialog} size="sm">
+      <Dialog open={openDialog} handler={handleOpenDialog} size="md">
         <DialogHeader>История ставок</DialogHeader>
         <DialogBody>
           <MyAlert
@@ -203,7 +203,7 @@ const LotTable = ({
                       ""
                     )}
                     <th className={classes}>
-                      {new Date(bidDateTime).toLocaleDateString("en-US")}
+                      {new Date(bidDateTime).toLocaleDateString()}
                     </th>
                     <th className={classes}>
                       {new Date(bidDateTime).toLocaleTimeString("en-US", {

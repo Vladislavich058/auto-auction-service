@@ -154,17 +154,20 @@ const LotRow = ({ lot, classes, type, setOpenDialog, setOpenLot }) => {
           {(type === "client" &&
             lot.bids.client &&
             lot.bids.client.id === authUser.id) ||
-            (type === "manager" && lot.manager.id === authUser.id)}
-          <Button
-            className="flex justify-center"
-            size="sm"
-            onClick={() => {
-              setOpenDialog(true);
-              setOpenLot(lot);
-            }}
-          >
-            История ставок
-          </Button>
+          (type === "manager" && lot.manager.id === authUser.id) ? (
+            <Button
+              className="flex justify-center"
+              size="sm"
+              onClick={() => {
+                setOpenDialog(true);
+                setOpenLot(lot);
+              }}
+            >
+              История ставок
+            </Button>
+          ) : (
+            ""
+          )}
         </div>
       </td>
     </tr>

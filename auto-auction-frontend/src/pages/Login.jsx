@@ -26,7 +26,7 @@ const Login = () => {
     isLoading: isLoginLoading,
     error: loginError,
     errorOpen: loginErrorOpen,
-    seterrorOpen: setLoginErrorOpen,
+    setErrorOpen: setLoginErrorOpen,
   } = useFetching(async () => {
     const response = await AuthService.login({ user });
     login(response);

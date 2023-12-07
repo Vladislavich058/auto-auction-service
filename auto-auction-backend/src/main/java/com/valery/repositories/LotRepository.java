@@ -14,14 +14,16 @@ public interface LotRepository extends JpaRepository<Lot, Long> {
 	Iterable<Lot> findByManagerId(Long id);
 
 	@Query(value = "SELECT lots.* \n" + "FROM lots \n" + "INNER JOIN lot_statuses ON lot_statuses.id=lots.status_id \n"
-			+ "WHERE lot_status LIKE 'VALIDATED' \n" + "ORDER BY (SELECT MAX(bid_cost) \n" + "			FROM bids\n"
+			+ "INNER JOIN cars ON cars.id=lots.car_id \n"
+			+ "WHERE lot_status LIKE 'VALIDATED' and primary_damage LIKE 'Без повреждений' \n"
+			+ "ORDER BY (SELECT MAX(bid_cost) \n" + "			FROM bids\n"
 			+ "            INNER JOIN lots ON lots.id=bids.lot_id) DESC \n" + "LIMIT 3\n" + "", nativeQuery = true)
 	Iterable<Lot> findTopLots();
 
 	Iterable<Lot> findByStatusLotStatus(ELotStatus eLotStatus);
 
 	Iterable<Lot> findByBidsClientId(Long id);
-	
+
 	Optional<Lot> findByBidsClientIdAndIdAndStatusLotStatusIn(Long clientId, Long id,
 			Iterable<ELotStatus> eLotStatuses);
 

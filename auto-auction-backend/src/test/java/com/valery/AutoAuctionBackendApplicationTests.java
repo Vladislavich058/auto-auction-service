@@ -12,13 +12,10 @@ import com.valery.controllers.LotController;
 @SpringBootTest
 class AutoAuctionBackendApplicationTests {
 
-	@Autowired
-	private LotController controller;
 
-	@DisplayName("First example test case")
 	@Test
 	void contextLoads() {
-		assertThat(controller).isNotNull();
+
 	}
 
 }

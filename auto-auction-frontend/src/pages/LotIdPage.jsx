@@ -10,7 +10,7 @@ import {
   IconButton,
   Input,
   Spinner,
-  Typography,
+  Typography
 } from "@material-tailwind/react";
 import AdminService from "API/AdminService";
 import ClientService from "API/ClientService";
@@ -413,7 +413,7 @@ const LotIdPage = ({ type = "" }) => {
                   </div>
                 ))}
                 <div className="mt-3 flex justify-end px-5 text-gray-400">
-                  {new Date(lot.createDateTime).toLocaleDateString("en-US")}
+                  {new Date(lot.createDateTime).toLocaleDateString()}
                 </div>
                 {type === "admin" &&
                 lot.status.lotStatus === "IN_PROCESSING" ? (
