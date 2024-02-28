@@ -19,8 +19,8 @@ public class UserRepositoryTest {
 	@Test
 	void saveUser() {
 		userRepository.save(User.builder().email("testuser@user.com").name("TestUserName").surname("TestUserSurname")
-				.password("TestUserPassword").role(Role.builder().role(ERole.ROLE_USER).build()).phone("80291234567")
-				.build());
+				.passportNumber("МР1234567").password("TestUserPassword")
+				.role(Role.builder().role(ERole.ROLE_USER).build()).phone("80291234567").build());
 		assertThat(userRepository.findByEmail("testuser@user.com").isPresent()).isTrue();
 	}
 

@@ -19,7 +19,7 @@ public class CarRestTest {
 	@Test
 	public void testAuthentication() throws Exception {
 		this.mockMvc
-				.perform(post("/login").content("{\"email\":\"admin@admin.com\", \"password\":\"admin\"}")
+				.perform(post("/api/auth/login").content("{\"email\":\"admin@admin.com\", \"password\":\"admin\"}")
 						.header(org.springframework.http.HttpHeaders.CONTENT_TYPE, "application/json"))
 				.andDo(print()).andExpect(status().isOk());
 	}

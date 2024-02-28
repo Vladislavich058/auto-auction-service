@@ -60,7 +60,7 @@ public class User implements UserDetails {
 	@Column(nullable = false)
 	private String passportNumber;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "role_id", nullable = false)
 	private Role role;
 
